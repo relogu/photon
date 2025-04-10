@@ -1,0 +1,172 @@
+\documentclass{sigplanconf}
+\usepackage{hyperref}
+
+\begin{document}
+\special{papersize=8.5in,11in}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Artifact Appendix for MLSys (Single Script Usage)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+\section{Artifact Appendix}
+
+\subsection{Abstract}
+This Artifact Appendix provides the instructions, scripts, and configurations necessary to run the experiments of our paper on federated large language model (LLM) pre-training using the \textit{Photon} system.
+We focus on the script, \texttt{scripts/fed\_125m\_example.sh}, that orchestrates the entire process: downloading dependencies, launching the federated server, spinning up clients, and training a 125M-parameter model end to end.
+However, we recommend following carefully the \texttt{README.md} file and the provided example scripts for a more detailed understanding of the setup and execution.
+By running the \texttt{scripts/fed\_125m\_example.sh} script, users can witness how Photon handles Hydra-based configuration resolution, aggregator (server) bootstrapping, and client participation.
+
+\subsection{Artifact check-list (meta-information)}
+{\small
+\begin{itemize}
+  \item \textbf{Algorithm:} LocalSGD-based federated optimization with integrated distributed data-parallel (DDP) or fully sharded data parallel (FSDP) when applicable.
+  \item \textbf{Program:} Python scripts employing PyTorch, integrated with Flower (for federated coordination) and Ray for model updates communication.
+  \item \textbf{Compilation:} No explicit compilation. A Python-based environment setup is mandatory.
+  \item \textbf{Transformations:} Data tokenization, normalization, optional data pre-processing (compression), and partitioning in client shards.
+  \item \textbf{Binary:} No direct binaries; entire artifact is Python-based.
+  \item \textbf{Data set:} A small subset of C4 is included for demonstration. For larger training, full C4 or The Pile can be substituted (scripts not included here).
+  \item \textbf{Run-time environment:} Linux system (Ubuntu 22.04 recommended), Python 3.11, CUDA(12.4)-enabled PyTorch 2.1.5, plus Hydra for configuration resolution.
+  \item \textbf{Hardware:} At least one NVIDIA GPU (NVIDIA A40, RTX2080Ti, V100, A100, H100, etc.), stable network links (1--10Gbps) if multiple machines are used.
+  \item \textbf{Run-time state:} Users can run everything on a single machine with multiple GPUs, or distribute across multiple nodes.
+  \item \textbf{Execution:} A single script \texttt{scripts/fed\_125m\_example.sh} that performs the entire flow (setup, server launch, client launches, local training).
+  \item \textbf{Metrics:} Primary metric is validation perplexity, with secondary metrics including GPU utilization, throughput, and communication overhead. Wandb logging is supported but requires custom configuration for which guidelines are provided in the code docstrings.
+  \item \textbf{Output:} Model checkpoints, logs of training progress, final perplexity.
+  \item \textbf{Experiments:} Demonstration of the federated pre-training and centralized training of a $125$M-parameter decoder-only LLM, which can be scaled up if desired.
+  \item \textbf{Disk space required:} Approximately $5/15$GB for the small subset of C4 plus checkpoints. (Larger experiments may require $300/1000$GB).
+  \item \textbf{Time needed to prepare workflow:} Approximately 1 hour for environment setup, $30/60$ minutes to download and preprocess the small dataset.
+  \item \textbf{Time needed to complete experiments:} A few hours for the $125$M demonstration. Larger-scale runs can take days.
+  \item \textbf{Publicly available:} Yes, code repository is licensed (Apache-2.0 license) and will be made public.
+  \item \textbf{Code licenses (if publicly available):} Apache License 2.0.
+  \item \textbf{Data licenses (if publicly available):} C4 is under the ODC-BY license.
+  \item \textbf{Workflow framework used:} Flower + Ray + PyTorch + Hydra, plus a single orchestrating shell script.
+  \item \textbf{Archived (provide DOI):} We will archive on Zenodo or similar databases.
+\end{itemize}
+}
+
+\subsection{Description}
+
+\subsubsection{How delivered}
+The artifact is provided in a zipped repository containing:
+\begin{itemize}
+  \item \texttt{README.md}: A quick overview and key instructions.
+  \item \texttt{scripts/system\_setup.sh}: Installs base dependencies, sets up the environment.
+  \item \texttt{scripts/convert\_c4\_dataset.sh}:  Acquires a small version of C4 for demonstration. Prepare the dataset for training.
+  \item \texttt{scripts/fed\_125m\_example.sh}:\\The single script that launches everything for a 125M-parameter model. It internally invokes Hydra-based configs for server and clients, then orchestrates the run.
+  \item \texttt{scripts/cen\_125m\_example.sh}:\\The single script that launches centralized training of a 125M-parameter model. It internally invokes Hydra-based configs. It is prepared to operate on a single machine setup launching a parallelized training on the available GPUs.
+  \item \texttt{configs/}: YAML files specifying hyperparameters (learning rate, batch size, etc.), aggregator properties, and Hydra overrides.
+\end{itemize}
+
+\subsubsection{Hardware dependencies}
+\begin{itemize}
+  \item \textbf{GPU:}
+    \begin{itemize}
+      \item For the 125M example, a single GPU with \(\geq\)12GB memory is sufficient, even though a larger memory (\(\geq\)40GB) is recommended.
+      \item For multi-node, each node should have a CUDA-capable GPU and at least 1--10Gbps network connectivity.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Software dependencies}
+\begin{itemize}
+  \item \textbf{OS:} Linux (Ubuntu 22.04+).
+  \item \textbf{Python:} 3.11 or higher.
+  \item \textbf{CUDA/CuDNN:} Version 12.4 is recommended, being compatible with PyTorch 2.1.5 and your specific GPU driver. These can be installed automatically via \texttt{scripts/system\_setup.sh}
+  \item \textbf{Package managers:} Poetry is supported for dependency management.
+  \item \textbf{Libraries:} PyTorch 2.1.5, Flower (custom version), Ray, Hydra, and standard Python utilities (NumPy, Pandas, etc.). Installed automatically via the \texttt{scripts/system\_setup.sh} and \texttt{scripts/install\_env.sh} scripts.
+\end{itemize}
+
+\subsubsection{Data sets}
+\begin{itemize}
+  \item A small subset of C4 is included for demonstration.
+  \item It is fetched, unpacked locally, and tokenized by\\ \texttt{scripts/convert\_c4\_dataset.sh}.
+\end{itemize}
+Users can later replace this with the full C4 or other corpora by adjusting parts of the code and configuration files.
+
+\subsection{Installation and Usage}
+
+Refer to the \texttt{README.md} file for a more detailed guide. Below is a quick start guide to run the federated pre-training of a 125M-parameter model.
+
+\noindent
+\textbf{System prep and environment:}
+\begin{enumerate}
+  \item \textbf{Download the zip file and run the setup script:} A system-wide \texttt{pip} package manager is required to install the \texttt{gdown} library that downloads the zipped repository at \href{https://drive.google.com/file/d/1R-LOpedSJx2_i7Jm0lH8PjkXeGxTUU9e/view?usp=drive_link}{this link}.
+  \begin{verbatim}
+sudo apt update
+sudo apt install python3-pip unzip
+pip3 install gdown
+FILE_ID=1R-LOpedSJx2_i7Jm0lH8PjkXeGxTUU9e
+gdown "https://drive.google.com/uc?id=$FILE_ID"
+unzip photon.zip
+cd photon/scripts
+. system_setup.sh
+  \end{verbatim}
+  This can install build tools, CUDA drivers (Ubuntu-based).
+  \item \textbf{Install dependencies:}
+  \begin{verbatim}
+cd photon/scripts
+. install_env.sh
+  \end{verbatim}
+\end{enumerate}
+\textbf{Download, prepare/convert dataset with the provided script.}
+\begin{verbatim}
+cd photon
+bash scripts/convert_c4_dataset.sh
+\end{verbatim}
+\noindent
+\textbf{Run the single script for federate pre-training of the 125M model:}
+\begin{verbatim}
+cd photon
+bash scripts/fed_125m_example.sh
+\end{verbatim}
+This command executes the following steps internally:
+\begin{itemize}
+  \item \textbf{Hydra configs interpretation:} Hydra interprets the configs and dumps them to a file that is read by the other processes. The file \texttt{photon/hydra\_resolver.py} is used.
+  \item \textbf{Launch Flower Superlink:} The command used is \texttt{poetry run flower-superlink}.
+  \item \textbf{Launch Flower ServerApp:} The command used is \texttt{poetry run flower-server-app photon.server\_app:app}.
+  \item \textbf{Launch Flower ClientApps:} The command used is \texttt{poetry run flower-client-app photon.client\_app:app}
+  \item \textbf{Federated rounds:} The aggregator orchestrates local training (LocalSGD) across clients, synchronizes updates after each round.
+  \item \textbf{Checkpoints and logs:} Intermediate global checkpoints and logs are saved in \texttt{checkpoints/} and \texttt{runs/} respectively.
+  \item \textbf{Completion:} The script logs periodically several metrics, e.g., perplexity and throughput.
+\end{itemize}
+
+\subsection{Evaluation and expected result}
+\textbf{Targets of interest:}
+\begin{itemize}
+  \item \textbf{Validation perplexity:} For the 125M demo, you should observe perplexity dropping towards the low 40s or upper 30s after sufficient rounds, depending on configuration.
+  \item \textbf{Runtime logs:} Both aggregator and client logs are found under \texttt{runs/}, indicating the number of tokens processed, average GPU utilization, and steps per round.
+  \item \textbf{Checkpoints:} Partial and final checkpoints are saved in the\\ \texttt{checkpoints/} folder.
+\end{itemize}
+
+\subsection{Experiment customization}
+\begin{itemize}
+  \item \textbf{Config override:} Edit \texttt{scripts/fed\_125m\_example.sh} or pass Hydra overrides to change client count or hyperparameters.
+  \item \textbf{Hardware scaling:} By default, the script spawns multiple clients on a single node. For multi-node, adapt the aggregator IP and client addresses in \texttt{scripts/fed\_125m\_example.sh}.
+  \item \textbf{Batch sizes / epochs:} Controlled by Hydra configs in the\\ \texttt{configs/} folder.
+  \item \textbf{Dataset:} Replace the small C4 path with your own local data for more extended training.
+\end{itemize}
+
+\subsection{Notes}
+\begin{itemize}
+  \item \textbf{Partial or intermittent clients:} If a client crashes or is not reachable, the aggregator  continues with remaining clients in subsequent rounds.
+  \item \textbf{Performance considerations:} For minimal overhead, ensure a stable GPU environment. Larger-scale runs (1.3B+) require more disk space, memory, and  multi-GPU setups.
+\end{itemize}
+
+\subsection{Methodology}
+\noindent
+We adhere to artifact evaluation guidelines:
+\begin{itemize}
+  \item Single-blind AE with emphasis on reproducibility and clarity.
+  \item Clear \textit{build} (ffrom the scripts \texttt{scripts/system\_setup.sh} and\\ \texttt{scripts/install\_env.sh}), \textit{run} ( using the script\\ \texttt{scripts/fed\_125m\_example.sh}), and \textit{analysis} (logs, final checkpoint) phases.
+  \item \textbf{ACM Artifact Badging} \cite{acm-badging} best practices: code will be made public, well-documented, and tested on a standard environment.
+\end{itemize}
+
+\begin{thebibliography}{9}
+
+\bibitem{acm-badging}
+ACM Artifact Review and Badging.
+\newblock \url{https://www.acm.org/publications/policies/artifact-review-badging}.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,33 @@
+---
+common: &dataset_defaults
+  max_seq_len: ${llm_config.max_seq_len}
+  download_retry: 2
+  download_timeout: 60
+  validate_hash: null
+  keep_zip: false
+  epoch_size: null
+  predownload: null
+  cache_limit: null
+  partition_algo: relaxed
+  num_canonical_nodes: null
+  shuffle: true  # Shuffling happened at partition time
+  shuffle_algo: py1e
+  shuffle_seed: 9176
+  shuffle_block_size: null
+  sampling_method: balanced
+  sampling_granularity: 1
+  batching_method: random
+
+train:
+  streams: null  # This will be interpreted by Python and changed
+  split: train  # This will be interpreted by Python and removed
+  root_remote: null  # This will be interpreted by Python and removed
+  root_local: null  # This will be interpreted by Python and removed
+  <<: *dataset_defaults
+
+val:
+  streams: null  # This will be interpreted by Python and changed
+  split: validation  # This will be interpreted by Python and removed
+  root_remote: null  # This will be interpreted by Python and removed
+  root_local: null  # This will be interpreted by Python and removed
+  <<: *dataset_defaults

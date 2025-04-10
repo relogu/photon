@@ -1,0 +1,13 @@
+# Exclude Python cache
+__pycache__/
+
+# Exclude the downloaded C4 dataset
+fed-c4/
+
+# Exclude LaTeX build files
+*.aux
+*.fbd_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz

@@ -1,0 +1,269 @@
+[build-system]
+requires = ["poetry-core>=1.4.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "photon"
+dynamic = ["classifiers", "dependencies", "requires-python"]
+version = "0.3.0"
+readme = "README.md"
+description = "Photon: Federated LLM Pre-Training"
+license = "Apache-2.0"
+authors = [
+    { name = "Lorenzo Sani", email = "ls985@cam.ac.uk" },
+    { name = "Alexandru-Andrei Iacob", email = "aai30@cam.ac.uk" },
+]
+
+
+[tool.poetry.dependencies]
+python = ">=3.10, <3.12"  # don't change this
+hydra-core = "1.3.2" # don't change this
+types-protobuf = "^4.24.0.1"
+types-pyyaml = "^6.0.12.12"
+types-decorator = "^5.1.8.4"
+types-setuptools = "^68.2.0.0"
+multiprocess = "^0.70.15"
+nvsmi = "^0.4.2"
+cloudpickle = "^3.0.0"
+tqdm = "^4.66.1"
+psutil = "^5.9.5"
+pandas = "^2.1.1"
+scipy = ">=1.10.0,<=1.11.0"
+librosa = "^0.10.1"
+flwr = { git = "https://github.com/relogu/flower.git", branch = "persisting-client-objs-lifespan", extras = ["simulation"] }
+nvidia-ml-py = "12.560.30"
+ipykernel = "^6.25.2"
+matplotlib = "^3.8.0"
+seaborn = "^0.13.0"
+jupyter-server = "^2.7.3"
+ipywidgets = "^8.1.1"
+ipython = "^8.17.2"
+torch = {url = "https://download.pytorch.org/whl/cu124/torch-2.5.1%2Bcu124-cp311-cp311-linux_x86_64.whl#sha256=6b2966ede9affe2fd69e0765691ca723ec870e0c34c7761f4d5b8e318383fdaf"}
+mosaicml = { git = "https://github.com/relogu/composer.git", tag = "dodo_v0.2.11", extras = ["libcloud,wandb,mlflow,oci,gcs,tensorboard"] }
+accelerate = ">=0.25,<0.26"
+mosaicml-streaming = { git = "https://github.com/relogu/streaming.git", tag = "dodo_v0.2.3" }
+fsspec = "2023.6.0"
+omegaconf = ">=2.2.3,<3"
+slack-sdk = "<4"
+#mosaicml-cli = ">=0.3,<1"
+boto3 = ">=1.21.45,<2"
+huggingface-hub = ">=0.17.0,<1.0"
+beautifulsoup4 = ">=4.12.2,<5"  # required for model download utils
+tenacity = ">=8.2.3,<9"
+llm-foundry = { git = "https://github.com/relogu/llm-foundry.git", tag = "dodo_v0.2.6" }
+lm-eval = { git = "https://github.com/EleutherAI/lm-evaluation-harness.git", tag = "v0.4.2" }
+wheel = "^0.42.0"
+pip = "24.1"
+py3nvml = "^0.2.7"
+memray = "^1.11.0"
+objgraph = "^3.6.0"
+minio = "^7.2.4"
+watchdog = "3.0.0"
+apache-libcloud = "^3.8.0"
+tensorboard = "^2.16.2"
+ninja = "^1.11.1.1"
+poetry = "^2.0.0"
+opencensus = "^0.11.4"
+lighteval = { git = "https://github.com/Iacob-Alexandru-Andrei/lighteval", branch = "fl", extras = ["accelerate", "extended_tasks", "vllm"] }
+vulture = "^2.14"
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = { version = "^24.10.0", extras = ["jupyter"] }
+docformatter = "^1.7.5"
+mypy = ">=1.11.0"
+pylint = ">=3.3.1"
+flake8 = "==7.1.1"
+pytest-watch = "==4.2.0"
+ruff = ">=0.9.6"
+yamlfix = ">=1.16.0"
+pre-commit = ">=3.8.0"
+pytest = ">=7.2.1,<9"
+pytest_codeblocks = ">=0.16.1,<0.18"
+pytest-cov = ">=4,<7"
+pyright = ">=1.1.390"
+toml = ">=0.10.2,<0.11"
+packaging = ">=21,<25"
+hf_transfer = "0.1.9"
+
+[tool.isort]
+line_length = 88
+indent = "    "
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+
+[tool.vulture]
+paths = ["photon",]
+sort_by_size = true
+
+[tool.black]
+line-length = 88
+preview = true
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+minversion = "6.2"
+addopts = "-qq"
+testpaths = [
+    "flwr_baselines",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+show_error_codes = true
+strict = false
+plugins = "numpy.typing.mypy_plugin"
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = "bad-continuation,duplicate-code,too-few-public-methods,useless-import-alias,import-error,no-member,no-name-in-module"
+good-names = "f,i,j,k,_,x,y,X,Y"
+signature-mutators="hydra.main.main"
+
+[[tool.mypy.overrides]]
+module = [
+    "importlib.metadata.*",
+    "importlib_metadata.*",
+]
+follow_imports = "skip"
+follow_imports_for_stubs = true
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+module = "torch.*"
+follow_imports = "skip"
+follow_imports_for_stubs = true
+
+[[tool.mypy.overrides]]
+module = "ray.*"
+follow_imports = "skip"
+follow_imports_for_stubs = true
+
+[tool.pyright]
+exclude = [
+    "env-**",
+    "venv*",
+    ".venv",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "proto",
+    "outputs",
+    "wandb",
+    "multirun",
+]
+stubPath = ""
+reportMissingTypeStubs = "none"
+reportUnusedClass = "warning"
+reportUnusedFunction = "warning"
+reportUnusedImport = "error"
+reportUnusedVariable = "error"
+reportDuplicateImport = "error"
+reportWildcardImportFromLibrary = "error"
+reportUntypedFunctionDecorator = "error"
+reportUndefinedVariable = "error"
+strictParameterNoneValue = true
+reportPropertyTypeMismatch = "error"
+reportUntypedNamedTuple = "error"
+reportUnnecessaryCast = "error"
+reportInvalidTypeVarUse = "error"
+reportOverlappingOverload = "error"
+reportUninitializedInstanceVariable = "error"
+reportInvalidStringEscapeSequence = "error"
+reportMissingParameterType = "error"
+reportCallInDefaultInitializer = "error"
+reportUnnecessaryComparison = "error"
+reportSelfClsParameterName = "error"
+reportImplicitStringConcatenation = "none"
+reportInvalidStubStatement = "error"
+reportIncompleteStub = "error"
+reportUnsupportedDunderAll = "error"
+reportUnusedCoroutine = "error"
+reportMissingImports = "error"
+
+[tool.docformatter]
+wrap-summaries = 88
+wrap-descriptions = 88
+
+[tool.yamlfix]
+allow_duplicate_keys = false
+line_length = 88
+none_representation = "null"
+whitelines = 1
+section_whitelines = 1
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "proto",
+    "outputs",
+    "wandb",
+    "multirun",
+]
+
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+preview = true
+lint.select = ["ALL"]
+lint.fixable = ["ALL"]
+lint.ignore = ["TD003", "FIX002", "S101", "CPY001"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "proto",
+]
+
+[tool.ruff.format]
+preview = true

@@ -1,0 +1,50 @@
+---
+root_dir: null
+
+icl_tasks:
+  - label: gsm8k
+    dataset_uri: eval/local_data/symbolic_problem_solving/gsm8k_prepended_8shot.jsonl
+    num_fewshot: [0]
+    icl_task_type: generation_task_with_answers
+    cot_delimiter: 'The answer is '
+    continuation_delimiter: "\n\nA:"
+    question_prelimiter: ''
+    do_normalization: false
+    early_stopping_criteria: ["\n\n", 'Question:']
+  - label: svamp
+    dataset_uri: eval/local_data/symbolic_problem_solving/svamp.jsonl
+    num_fewshot: [5]
+    icl_task_type: generation_task_with_answers
+    cot_delimiter: 'The answer is '
+    continuation_delimiter: "\n\nA:"
+    question_prelimiter: 'Question: '
+    do_normalization: false
+    early_stopping_criteria: ["\n\n", 'Question:']
+  - label: bigbench_dyck_languages
+    dataset_uri: eval/local_data/symbolic_problem_solving/bigbench_dyck_languages.jsonl
+    num_fewshot: [5]
+    icl_task_type: language_modeling
+  - label: bigbench_elementary_math_qa
+    dataset_uri: eval/local_data/symbolic_problem_solving/bigbench_elementary_math_qa.jsonl
+    num_fewshot: [1]
+    icl_task_type: multiple_choice
+  - label: agi_eval_lsat_ar
+    dataset_uri: eval/local_data/symbolic_problem_solving/agi_eval_lsat_ar.jsonl
+    num_fewshot: [5]
+    icl_task_type: multiple_choice
+  - label: bigbench_cs_algorithms
+    dataset_uri: eval/local_data/symbolic_problem_solving/bigbench_cs_algorithms.jsonl
+    num_fewshot: [10]
+    icl_task_type: language_modeling
+  - label: bigbench_operators
+    dataset_uri: eval/local_data/symbolic_problem_solving/bigbench_operators.jsonl
+    num_fewshot: [3]
+    icl_task_type: language_modeling
+  - label: simple_arithmetic_nospaces
+    dataset_uri: eval/local_data/symbolic_problem_solving/simple_arithmetic_nospaces.jsonl
+    num_fewshot: [5]
+    icl_task_type: language_modeling
+  - label: simple_arithmetic_withspaces
+    dataset_uri: eval/local_data/symbolic_problem_solving/simple_arithmetic_withspaces.jsonl
+    num_fewshot: [5]
+    icl_task_type: language_modeling

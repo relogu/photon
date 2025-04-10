@@ -1,0 +1,12 @@
+---
+- client_streams:
+    stream_0:
+      choose: null
+      download_retry: null
+      download_timeout: null
+      keep_zip: null
+      local: c8/en/client_0
+      proportion: null
+      remote: null
+      repeat: null
+      validate_hash: null

@@ -1,0 +1,106 @@
+---
+run_uuid: chiappe
+seed: 1337
+pretrained_model_path: null
+wte_parameters_path: null
+cleanup_checkpoints: false
+cleanup_checkpoints_per_round: false
+
+centralized:
+  store_init_model: false
+  store_final_model: false
+  stream_id: null
+  eval_only: false
+  split_eval: false
+  reset_timestamp: false
+
+# Photon specific settings
+photon:
+  n_nodes: 1
+  refresh_period: 50
+  checkpoint: false
+  # Set to null to only restore from the current run
+  restore_run_uuid: null
+  restore_cent_run_uuid: null
+  restore_cent_run_batches: null
+  copy_client_checkpoints: true
+  resume_round: -1
+  saving_path: null
+  comm_stack:
+    # S3 communication stack
+    s3: false
+    # SharedMemory communication stack
+    shm: true
+    # Ray communication stack
+    ray: false
+
+fl:
+  n_total_clients: 8
+  n_clients_per_round: 8
+  n_rounds: 200
+  reset_checkpoint: false
+  reset_optimizer: true
+  reset_dataset_state: false
+  reset_timestamp: false
+  resize_vocab: null
+  use_unigram_metrics: false
+  allow_unigram_metrics_failures: false
+  n_local_epochs: 1
+  n_local_steps: 0
+
+  random_layers: []
+  random_init_freq: 0
+  truly_random_init: true
+  personalized_layers: []
+  frozen_layers: null
+  unfrozen_layers: null
+
+  ignore_failed_rounds: false
+  accept_failures_cnt: 0
+  eval_period: 1
+  split_eval: false
+
+  strategy_name: NESTOROV
+  strategy_kwargs:
+    server_learning_rate: 0.7
+    server_momentum: 0.7
+
+  set_trainer_params_filter_keys: true
+  set_trainer_key_to_filter: transformer
+  aggregate_momenta: false
+
+  use_noise_scale_metric: false
+  noise_scale_beta: 0.99
+
+# Defaults
+defaults:
+  - _self_
+  - llm_config: mpt-125m
+  - eval_gauntlet_config: empty
+  - icl_tasks_config: empty
+  - dataset: fed-c4
+  - dataset/streams@dataset.train.streams: 8_clients
+  - dataset/streams@dataset.val.streams: centralised
+
+s3_comm_config:
+  bucket_name: checkpoints
+  num_attempts: 3
+  backend_kwargs:
+    client_config:
+      connect_timeout: 3600
+      read_timeout: 3600
+
+# Weights&Biases
+use_wandb: false
+
+wandb:
+  setup:
+    project: photon
+    group: llm
+    tags: ['run_uuid_${run_uuid}']
+    entity: null
+    mode: online
+    name: ${run_uuid}
+    resume: allow
+    id: ${run_uuid}
+    allow_val_change: true
