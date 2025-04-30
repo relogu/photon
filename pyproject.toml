@@ -68,7 +68,7 @@ lighteval = { git = "https://github.com/Iacob-Alexandru-Andrei/lighteval", branc
 vulture = "^2.14"
 
 [tool.poetry.group.dev.dependencies]
-isort = "^5.13.2"
+isort = "^6.0.1"
 black = { version = "^24.10.0", extras = ["jupyter"] }
 docformatter = "^1.7.5"
 mypy = ">=1.11.0"
